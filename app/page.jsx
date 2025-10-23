@@ -2,22 +2,13 @@
 import React, { useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus, HelpCircle } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import Image from 'next/image';
+import GalleryWidget from '../components/gallery-widget';
+
 
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('about');
-  const [galleryImages, setGalleryImages] = useState([
-    "/gallery-img.png",
-    "/gallery-img.png",
-    "/gallery-img.png",
-    "/gallery-img.png",
-  ]);
-  const fileInputRef = useRef(null);
+
 
 
   const aboutContent = {
@@ -33,20 +24,7 @@ export default function Home() {
     recommended: aboutContent
   };
 
-  const handleImageUpload = (event) => {
-    const files = event.target.files;
-    if (!files) return;
 
-    const newImages = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const imageURL = URL.createObjectURL(file);
-      newImages.push(imageURL);
-    }
-
-    // Update gallery
-    setGalleryImages((prev) => [...prev, ...newImages]);
-  };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-[#373E44] to-[#191B1F] p-8 flex items-center justify-center">
@@ -62,7 +40,7 @@ export default function Home() {
           <div className="bg-[#363C43] rounded-3xl shadow-2xl overflow-hidden">
             <div className="flex items-center justify-between p-2">
               <HelpCircle className="w-6 h-6 text-gray-500 ml-4" />
-              <div className="flex bg-gray-900 rounded-full p-1">
+              <div className="w-full mx-10 flex justify-center items-center bg-gray-900 rounded-2xl p-1">
                 {[
                   { link: "about", text: "About Me" },
                   { link: "experiences", text: "Experiences" },
@@ -73,15 +51,15 @@ export default function Home() {
                     <button
                       key={tab.text}
                       onClick={() => setActiveTab(tab.link)}
-                      className={`relative px-8 py-3 rounded-full text-sm font-medium transition-all duration-200 ${isActive
-                        ? "text-white"
+                      className={`relative px-8 py-3 rounded-2xl text-sm font-medium transition-all duration-200 ${isActive
+                        ? "text-white shadow-[0_8px_25px_rgba(0,0,0,0.45)] shadow-black"
                         : "text-gray-400 hover:text-gray-200"
                         }`}
                     >
                       {isActive && (
                         <motion.div
                           layoutId="active-pill"
-                          className="absolute inset-0 bg-gray-700 rounded-full shadow-lg"
+                          className="absolute inset-0 bg-[#22262B] rounded-2xl shadow-lg"
                           transition={{ type: "spring", stiffness: 400, damping: 30 }}
                         />
                       )}
@@ -90,7 +68,6 @@ export default function Home() {
                   );
                 })}
               </div>
-              <div className="w-6"></div>
             </div>
 
             <div className="px-8 py-6">
@@ -103,94 +80,7 @@ export default function Home() {
           </div>
 
           {/* Gallery Widget */}
-          <div className="bg-[#363C43] rounded-3xl shadow-2xl p-6">
-            {/* Header */}
-            <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
-              <div className="flex items-center gap-4">
-                <HelpCircle className="w-6 h-6 text-gray-400" />
-                <button className="px-8 py-3 bg-gray-900 text-white rounded-full text-sm font-medium shadow-md">
-                  Gallery
-                </button>
-              </div>
-
-              <div className="flex items-center gap-4">
-                {/* Hidden Input */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  ref={fileInputRef}
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-
-                {/* ADD IMAGE BUTTON */}
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className='soft-button text-white text-xs font-bold uppercase py-4 px-12 rounded-full tracking-wider flex items-center'
-                >
-                    <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 4v16m-8-8h16"
-                    />
-                  </svg>
-                  Add Image
-                </button>
-
-                {/* Navigation Buttons */}
-                <div className="flex gap-2">
-                  <button className="swiper-button-prev-custom w-10 h-10 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center transition-all shadow-md">
-                    <ChevronLeft className="w-5 h-5 text-white" />
-                  </button>
-                  <button className="swiper-button-next-custom w-10 h-10 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center transition-all shadow-md">
-                    <ChevronRight className="w-5 h-5 text-white" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Swiper Carousel */}
-            <Swiper
-              modules={[Navigation]}
-              navigation={{
-                nextEl: ".swiper-button-next-custom",
-                prevEl: ".swiper-button-prev-custom",
-              }}
-              spaceBetween={20}
-              slidesPerView={3}
-              loop={true}
-              className="rounded-2xl"
-              breakpoints={{
-                320: { slidesPerView: 1 },
-                640: { slidesPerView: 2 },
-                1024: { slidesPerView: 3 },
-              }}
-            >
-              {galleryImages.map((img, idx) => (
-                <SwiperSlide key={idx}>
-                  <div className="aspect-square rounded-2xl overflow-hidden group relative cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
-                    <Image
-                      src={img}
-                      alt={`Gallery ${idx + 1}`}
-                      height={300}
-                      width={300}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-all duration-500" />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+          <GalleryWidget/>
         </div>
       </div>
     </div>
